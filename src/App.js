@@ -1,23 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useEffect, useState } from "react";
+import PostCard from "./components/PostCard";
+import "./App.css";
 
 function App() {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    fetch("https://www.reddit.com/r/reactjs.json")
+      .then((res) => res.json())
+      .then((data) => {
+        const children = data.data.children.map((child) => child.data);
+        setPosts(children);
+      });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <h1>Reddit /r/reactjs Posts</h1>
+      <div className="card-container">
+        {posts.map((post) => (
+          <PostCard
+            key={post.id}
+            title={post.title}
+            selftext_html={post.selftext_html}
+            url={post.url}
+            score={post.score}
+          />
+        ))}
+      </div>
     </div>
   );
 }
